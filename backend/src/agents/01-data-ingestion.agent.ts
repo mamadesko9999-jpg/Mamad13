@@ -1,1 +1,118 @@
-import axios from 'axios';\nimport { logger } from './logger';\n\ninterface FootballMatch {\n  id: string;\n  homeTeam: string;\n  awayTeam: string;\n  matchDate: Date;\n  league: string;\n  status: 'scheduled' | 'live' | 'finished';\n  homeScore?: number;\n  awayScore?: number;\n  stadium?: string;\n}\n\ninterface DataSource {\n  name: string;\n  url: string;\n  apiKey?: string;\n  credibility: number;\n}\n\nclass DataIngestionAgent {\n  private sources: DataSource[] = [\n    {\n      name: 'Football-Data.org',\n      url: 'https://api.football-data.org/v4',\n      apiKey: process.env.FOOTBALL_DATA_API_KEY,\n      credibility: 95,\n    },\n    {\n      name: 'Understat',\n      url: 'https://understat.com/api',\n      apiKey: process.env.UNDERSTAT_API_KEY,\n      credibility: 90,\n    },\n    {\n      name: 'WhoScored',\n      url: 'https://www.whoscored.com/api',\n      apiKey: process.env.WHOSCORED_API_KEY,\n      credibility: 88,\n    },\n    {\n      name: 'FlashScore',\n      url: 'https://www.flashscore.com/api',\n      apiKey: process.env.FLASHSCORE_API_KEY,\n      credibility: 85,\n    },\n  ];\n\n  async fetchFromAllSources(): Promise<FootballMatch[]> {\n    logger.info('🤖 Agent 1: Starting multi-source data ingestion...');\n    \n    const allMatches: FootballMatch[] = [];\n    const sourceResults = [];\n\n    for (const source of this.sources) {\n      try {\n        logger.info(`📡 Fetching from ${source.name}...`);\n        const matches = await this.fetchFromSource(source);\n        sourceResults.push({\n          source: source.name,\n          count: matches.length,\n          credibility: source.credibility,\n          success: true,\n        });\n        allMatches.push(...matches);\n      } catch (error) {\n        logger.error(`❌ Error fetching from ${source.name}:`, error);\n        sourceResults.push({\n          source: source.name,\n          count: 0,\n          credibility: source.credibility,\n          success: false,\n          error: String(error),\n        });\n      }\n    }\n\n    logger.info('✅ Agent 1 Complete - Data Ingestion Summary:', sourceResults);\n    return allMatches;\n  }\n\n  private async fetchFromSource(source: DataSource): Promise<FootballMatch[]> {\n    const headers: any = {\n      'User-Agent': 'HERMES-Football-Intelligence/1.0',\n    };\n\n    if (source.apiKey) {\n      headers['X-Auth-Token'] = source.apiKey;\n    }\n\n    try {\n      const response = await axios.get(`${source.url}/matches`, {\n        headers,\n        timeout: 10000,\n      });\n\n      return this.normalizeMatches(response.data, source.name);\n    } catch (error) {\n      logger.error(`Failed to fetch from ${source.name}:`, error);\n      return [];\n    }\n  }\n\n  private normalizeMatches(data: any, sourceName: string): FootballMatch[] {\n    // Normalize different API formats to common structure\n    const matches: FootballMatch[] = [];\n\n    if (Array.isArray(data.matches || data.fixtures || data)) {\n      const matchArray = data.matches || data.fixtures || data;\n      \n      for (const match of matchArray) {\n        matches.push({\n          id: match.id || match.fixture_id || `${sourceName}-${match.homeTeam}-${match.awayTeam}-${match.utcDate}`,\n          homeTeam: match.homeTeam?.name || match.home?.name || match.home_team,\n          awayTeam: match.awayTeam?.name || match.away?.name || match.away_team,\n          matchDate: new Date(match.utcDate || match.date || match.kick_off),\n          league: match.competition?.name || match.league?.name || 'Unknown',\n          status: (match.status || 'scheduled').toLowerCase() as any,\n          homeScore: match.score?.fullTime?.home || match.home_score,\n          awayScore: match.score?.fullTime?.away || match.away_score,\n          stadium: match.venue || 'Unknown',\n        });\n      }\n    }\n\n    return matches;\n  }\n}\n\nexport const dataIngestionAgent = new DataIngestionAgent();\n"
+// 🤖 AGENT 1: DATA INGESTION AGENT
+// کار: جمع‌آوری بازی‌ها از تمام منابع
+
+import axios from 'axios';
+import { logger } from '../utils/logger';
+import { Match } from '../models/Match';
+
+interface MatchRaw {
+  id?: string;
+  fixture_id?: string;
+  homeTeam?: { name: string };
+  awayTeam?: { name: string };
+  home_team?: string;
+  away_team?: string;
+  utcDate?: string;
+  date?: string;
+  kick_off?: string;
+  competition?: { name: string };
+  league?: { name: string };
+  status?: string;
+  score?: { fullTime: { home: number; away: number } };
+  home_score?: number;
+  away_score?: number;
+  venue?: string;
+}
+
+class DataIngestionAgent {
+  private sources = [
+    {
+      name: 'Football-Data.org',
+      url: 'https://api.football-data.org/v4',
+      credibility: 95,
+    },
+    {
+      name: 'Understat',
+      url: 'https://understat.com/api',
+      credibility: 90,
+    },
+    {
+      name: 'WhoScored',
+      url: 'https://www.whoscored.com/api',
+      credibility: 88,
+    },
+    {
+      name: 'FlashScore',
+      url: 'https://www.flashscore.com/api',
+      credibility: 85,
+    },
+  ];
+
+  async executeAgent(): Promise<any[]> {
+    logger.info('🤖 [AGENT 1] Starting Data Ingestion...');
+    const results = [];
+
+    for (const source of this.sources) {
+      try {
+        const matches = await this.fetchMatches(source);
+        results.push({
+          source: source.name,
+          count: matches.length,
+          status: 'success',
+          credibility: source.credibility,
+        });
+        logger.info(`✅ ${source.name}: ${matches.length} matches fetched`);
+      } catch (error) {
+        results.push({
+          source: source.name,
+          count: 0,
+          status: 'error',
+          error: String(error),
+        });
+        logger.error(`❌ ${source.name} failed:`, error);
+      }
+    }
+
+    logger.info('✅ [AGENT 1] Complete - Data Ingestion Summary:', results);
+    return results;
+  }
+
+  private async fetchMatches(source: any): Promise<any[]> {
+    const headers: any = { 'User-Agent': 'HERMES/1.0' };
+    if (process.env[`${source.name.replace(/[^A-Z]/g, '')}_API_KEY`]) {
+      headers['X-Auth-Token'] = process.env[`${source.name.replace(/[^A-Z]/g, '')}_API_KEY`];
+    }
+
+    try {
+      const response = await axios.get(`${source.url}/matches?status=today`, {
+        headers,
+        timeout: 8000,
+      });
+      return this.normalizeData(response.data, source.name);
+    } catch (error) {
+      return [];
+    }
+  }
+
+  private normalizeData(data: any, source: string): any[] {
+    const matches = [];
+    const raw = data.matches || data.fixtures || data || [];
+    
+    for (const m of (Array.isArray(raw) ? raw : [])) {
+      matches.push({
+        id: m.id || m.fixture_id,
+        home: m.homeTeam?.name || m.home_team || 'Unknown',
+        away: m.awayTeam?.name || m.away_team || 'Unknown',
+        date: m.utcDate || m.date || m.kick_off,
+        league: m.competition?.name || m.league?.name || 'Unknown',
+        status: m.status || 'scheduled',
+        homeScore: m.score?.fullTime?.home || m.home_score,
+        awayScore: m.score?.fullTime?.away || m.away_score,
+        source,
+      });
+    }
+    return matches;
+  }
+}
+
+export const agent1 = new DataIngestionAgent();
