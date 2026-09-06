@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HERMES - پلتفرم هوش مصنوعی فوتبال</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #f1f5f9;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #0f766e;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            font-size: 2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #f1f5f9;
+            text-decoration: none;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            color: #0f766e;
+            background: rgba(15, 118, 110, 0.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 4rem auto 0;
+            padding: 4rem 2rem;
+            text-align: center;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #0f766e, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f766e, #164e63);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(15, 118, 110, 0.2);
+            color: #0f766e;
+            border: 2px solid #0f766e;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(15, 118, 110, 0.3);
+        }
+
+        /* Features Grid */
+        .features {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #0f766e;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: rgba(30, 58, 138, 0.3);
+            border: 1px solid rgba(15, 118, 110, 0.2);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #0f766e;
+            background: rgba(15, 118, 110, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+            color: #0f766e;
+        }
+
+        .feature-card p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        /* Matches Section */
+        .matches {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .matches h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #0f766e;
+        }
+
+        .matches-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .match-card {
+            background: rgba(30, 58, 138, 0.4);
+            border: 1px solid rgba(15, 118, 110, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            border-color: #0f766e;
+            background: rgba(15, 118, 110, 0.2);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .match-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-live {
+            background: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-scheduled {
+            background: #3b82f6;
+        }
+
+        .status-finished {
+            background: #10b981;
+        }
+
+        .match-time {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .team-short {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .vs {
+            color: #0f766e;
+            font-weight: bold;
+            padding: 0 1rem;
+            font-size: 1.2rem;
+        }
+
+        .score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0f766e;
+        }
+
+        .match-stats {
+            background: rgba(15, 118, 110, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .match-stats p {
+            margin: 0.3rem 0;
+            color: #cbd5e1;
+        }
+
+        .quality-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #10b981;
+        }
+
+        .quality-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+        }
+
+        /* Prediction Badge */
+        .prediction-badge {
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid #7c3aed;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .prediction-badge p {
+            margin: 0.3rem 0;
+            color: #c4b5fd;
+        }
+
+        /* Stats */
+        .stats {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.2), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(15, 118, 110, 0.3);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0f766e;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+        }
+
+        /* Principles */
+        .principles {
+            background: rgba(15, 118, 110, 0.1);
+            border: 1px solid rgba(15, 118, 110, 0.3);
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+        }
+
+        .principles h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #0f766e;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .principle {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .principle-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .principle-text {
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 2px solid #0f766e;
+            padding: 2rem;
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 4rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span>⚽</span>
+                <span>HERMES</span>
+            </div>
+            <nav>
+                <a href="#matches">مسابقات</a>
+                <a href="#features">ویژگی‌ها</a>
+                <a href="#stats">آمار</a>
+                <a href="#principles">اصول</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>🚀 HERMES ASI.n8n</h1>
+        <p>پلتفرم هوش مصنوعی پیشرفته تحلیل و پیش‌بینی فوتبال</p>
+        <p style="font-size: 0.95rem; color: #94a3b8;">جمع‌آوری داده از منابع متعدد | تحلیل 12 لایه‌ای | پیش‌بینی با 5 مدل | قابلیت بررسی کامل</p>
+        
+        <div class="cta-buttons">
+            <button class="btn btn-primary">🔍 تحلیل مسابقات</button>
+            <button class="btn btn-secondary">📊 مشاهده آمار</button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2>✨ ویژگی‌های اصلی</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>جمع‌آوری داده چند‌منبع</h3>
+                <p>اطلاعات مسابقات از منابع معتبر جهانی به‌صورت خودکار</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3>کنترل کیفیت داده</h3>
+                <p>اعتبارسنجی تمام داده‌ها با امتیاز کیفیت 0-100</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>تحلیل 12 لایه‌ای</h3>
+                <p>بررسی عمیق از زوایای مختلف: فرم، تاکتیک، آمار، xG</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>پیش‌بینی با 5 مدل</h3>
+                <p>الگوریتم‌های مستقل برای تنوع و دقت بیشتر</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔴</div>
+                <h3>تحلیل تیم قرمز</h3>
+                <p>جستجوی خودکار شواهد مخالف برای کاهش سوگیری</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>قابلیت بررسی کامل</h3>
+                <p>ردیابی هر پیش‌بینی تا منبع و الگوریتم</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Matches Section -->
+    <section class="matches" id="matches">
+        <h2>📅 مسابقات امروز</h2>
+        <div class="matches-container">
+            <!-- Match 1 -->
+            <div class="match-card">
+                <div class="match-header">
+                    <span class="match-status status-live">🔴 زنده</span>
+                    <span class="match-time">20:45</span>
+                </div>
+
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-name">منچستر سیتی</div>
+                        <div class="team-short">MCI</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="team">
+                        <div class="team-name">لیورپول</div>
+                        <div class="team-short">LIV</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div class="score">2 - 1</div>
+                </div>
+
+                <div class="match-stats">
+                    <p>📊 xG: <strong>1.85 - 1.42</strong></p>
+                    <p>⚽ شوت: <strong>12 - 8</strong></p>
+                    <p>🎯 مالکیت: <strong>62% - 38%</strong></p>
+                </div>
+
+                <div class="quality-badge">
+                    <div class="quality-dot"></div>
+                    کیفیت داده: 95/100
+                </div>
+
+                <div class="prediction-badge">
+                    <p><strong>📈 پیش‌بینی:</strong> برد منچستر</p>
+                    <p>اطمینان: <strong>87%</strong></p>
+                </div>
+            </div>
+
+            <!-- Match 2 -->
+            <div class="match-card">
+                <div class="match-header">
+                    <span class="match-status status-scheduled">📅 برنامه‌ریزی شده</span>
+                    <span class="match-time">22:00</span>
+                </div>
+
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-name">رئال مادرید</div>
+                        <div class="team-short">RMA</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="team">
+                        <div class="team-name">بارسلونا</div>
+                        <div class="team-short">FCB</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="color: #94a3b8; font-size: 1.2rem;">-</div>
+                </div>
+
+                <div class="match-stats">
+                    <p>📊 فرم: رئال (4 برد) - بارسلونا (3 برد)</p>
+                    <p>🏆 لیگ: لالیگا</p>
+                    <p>🏟️ ورزشگاه: سانتیاگو برنابئو</p>
+                </div>
+
+                <div class="quality-badge">
+                    <div class="quality-dot"></div>
+                    کیفیت داده: 92/100
+                </div>
+
+                <div class="prediction-badge">
+                    <p><strong>📈 پیش‌بینی:</strong> بیش از 2.5 گل</p>
+                    <p>اطمینان: <strong>78%</strong></p>
+                </div>
+            </div>
+
+            <!-- Match 3 -->
+            <div class="match-card">
+                <div class="match-header">
+                    <span class="match-status status-finished">✅ پایان‌یافته</span>
+                    <span class="match-time">18:30</span>
+                </div>
+
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-name">بایرن مونیخ</div>
+                        <div class="team-short">FCB</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="team">
+                        <div class="team-name">دورتموند</div>
+                        <div class="team-short">BVB</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div class="score">3 - 1</div>
+                </div>
+
+                <div class="match-stats">
+                    <p>📊 xG: <strong>2.15 - 0.85</strong></p>
+                    <p>⚽ شوت: <strong>18 - 9</strong></p>
+                    <p>🎯 دقت پاس: <strong>89% - 72%</strong></p>
+                </div>
+
+                <div class="quality-badge">
+                    <div class="quality-dot"></div>
+                    کیفیت داده: 98/100
+                </div>
+
+                <div class="prediction-badge">
+                    <p><strong>✅ پیش‌بینی صحیح:</strong> برد بایرن</p>
+                    <p>اطمینان: <strong>91%</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #0f766e;">📊 آمار و عملکرد</h2>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number">2,847</div>
+                <div class="stat-label">مسابقات تحلیل‌شده</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">94%</div>
+                <div class="stat-label">دقت پیش‌بینی</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">87%</div>
+                <div class="stat-label">ROI متوسط</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">12</div>
+                <div class="stat-label">لایه تحلیل</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Principles Section -->
+    <section class="principles" id="principles">
+        <h2>🎯 اصول بنیادین</h2>
+        <div class="principles-grid">
+            <div class="principle">
+                <div class="principle-icon">❌</div>
+                <div class="principle-text">هرگز ساده نه</div>
+            </div>
+            <div class="principle">
+                <div class="principle-icon">🚫</div>
+                <div class="principle-text">هرگز فرض نکن</div>
+            </div>
+            <div class="principle">
+                <div class="principle-icon">🛑</div>
+                <div class="principle-text">هرگز ساختگی نه</div>
+            </div>
+            <div class="principle">
+                <div class="principle-icon">🔐</div>
+                <div class="principle-text">هرگز یک منبع نه</div>
+            </div>
+            <div class="principle">
+                <div class="principle-icon">⚠️</div>
+                <div class="principle-text">هرگز اجباری نه</div>
+            </div>
+            <div class="principle">
+                <div class="principle-icon">🔍</div>
+                <div class="principle-text">هرگز ابهام مخفی نه</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>🚀 HERMES ASI.n8n | پلتفرم هوشمند تحلیل و پیش‌بینی فوتبال</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            📱 موبایل | 💻 وب | 🔌 API | 📊 داشبورد | 🔐 نامحدود امنیت
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.85rem; color: #64748b;">
+            © 2024 HERMES. تمام حقوق محفوظ است.
+        </p>
+    </footer>
+
+    <script>
+        // Interactive features
+        document.querySelectorAll('.match-card').forEach(card => {
+            card.addEventListener('click', function() {
+                alert('✅ کلیک کردی! سایت کاملاً فعال است. 🚀');
+            });
+        });
+
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('🎯 دکمه فعال! برای سایت کامل روی GitHub بیا: github.com/mamadesko9999-jpg/Mamad13');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeIn 0.6s ease-in';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .match-card, .stat-box').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
